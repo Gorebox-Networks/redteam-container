@@ -1,0 +1,8 @@
+# SSH
+SSHPASSWORD=superawesomepasswordthatyouwouldneverguess2 # CHANGEME
+
+# RedTeam
+RTSSHHOSTPORT=22222
+
+# Storage/Volumes
+BASEVOLUME=./docker_vols/
