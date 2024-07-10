@@ -9,10 +9,10 @@ services:
     ports:
       - "22:22"
     environment:
-      SSHPASSWORD: ${SSHPASSWORD}
+      - SSHPASSWORD=${SSHPASSWORD}
     volumes:
-      - ./conf:/root/.vimrc:/root/.vimrc
-      - ./conf:/root/.zshrc:/root/.zshrc
-      - ./conf:/root/.bashrc:/root/.bashrc
+      - ./conf/.vimrc:/root/.vimrc
+      - ./conf/.zshrc:/root/.zshrc
+      - ./conf/.bashrc:/root/.bashrc
       - ./conf/sshd_config:/etc/ssh/sshd_config
       - ./installers:/root/RedTeamToolkit
