@@ -12,5 +12,7 @@ services:
     ports:
       - "${RTSSHHOSTPORT}:22"
     restart: unless-stopped
+    stdin_open: true  # Mantiene stdin abierto para la interacción
+    tty: true         # Asigna una pseudo-TTY
     env_file:
       - .env
