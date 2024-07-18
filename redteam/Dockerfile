@@ -19,7 +19,7 @@ COPY installers/start.sh /root/start.sh
 
 RUN chmod +x /root/start.sh
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y $packages && pip3 install chardet
+RUN apt-get update && apt-get upgrade -y && apt-get install -y $packages && pip3 install charset
 
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended && \
     chsh -s $(which zsh)
