@@ -54,4 +54,4 @@ RUN chmod +x /root/start.sh
 WORKDIR /root/RedTeamToolkit
 
 CMD ["/usr/bin/supervisord"]
-CMD ["/root/start.sh"]
+# CMD ["/root/start.sh"]
