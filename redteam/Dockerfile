@@ -8,8 +8,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG packages="openssh-server zsh net-tools apt-utils python3 python3-dev build-essential python3-pip redis-server terminator \
     wget vim gnupg2 postgresql python3-venv apt-transport-https lsb-release libreadline-dev libpq5 libpq-dev readline-common libsqlite3-dev libpcap-dev \
     subversion git-core autoconf zlib1g-dev libxml2-dev libxslt1-dev libyaml-dev ruby1.9.1 nmap iputils-ping netdiscover hping3 \
-    netcat-traditional gobuster iproute2 iputils-arping dnsutils tcpdump curl git screen"
-# END PACKAGES #
+    netcat-traditional gobuster iproute2 iputils-arping dnsutils tcpdump curl git screen xfce4 xfce4-goodies tightvncserver dbus-x11 x11-xserver-utils supervisor"
 
 # Configuration files
 COPY conf/.vimrc /root/.vimrc
@@ -36,15 +35,23 @@ RUN chmod +x /root/RedTeamToolkit/*.sh && cd /root/RedTeamToolkit && git clone h
 # Python env
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# setup for ssh (change password ASAP)
+# Setup for ssh (change password ASAP)
 RUN echo "root:$SSHPASSWORD" | chpasswd
 
-# Exponer el puerto 22 para SSH
-EXPOSE 22
+# Expose ports for SSH and VNC
+EXPOSE 22 5901
 
 # Cleanup
 RUN touch /root/.hushlogin && apt-get autoremove -y && apt-get autoclean -y
 
+# Supervisor configuration for VNC
+COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Start script
+COPY installers/start.sh /root/start.sh
+RUN chmod +x /root/start.sh
+
 WORKDIR /root/RedTeamToolkit
 
+CMD ["/usr/bin/supervisord"]
 CMD ["/root/start.sh"]
