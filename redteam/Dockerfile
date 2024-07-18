@@ -47,4 +47,4 @@ RUN touch /root/.hushlogin && apt-get autoremove -y && apt-get autoclean -y
 
 WORKDIR /root/RedTeamToolkit
 
-CMD ["zsh", "-c", "while true; do sleep 30; done"]
+CMD ["/root/start.sh"]
