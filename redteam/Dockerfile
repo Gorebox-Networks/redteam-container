@@ -22,9 +22,8 @@ RUN chmod +x /root/start.sh
 RUN apt-get update --fix-missing && \
     apt-get upgrade -y && \
     apt-get install -y $packages && \
-    pip3 install chardet || apt-get update --fix-missing && \
-    apt-get install -y $packages && \
-    pip3 install chardet
+    pip3 install chardet || \
+    { apt-get update --fix-missing && apt-get install -y $packages && pip3 install chardet; }
 
 # Install Oh My Zsh
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended && \
