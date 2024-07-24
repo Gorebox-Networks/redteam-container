@@ -73,4 +73,11 @@ if [ -d "$WORKDIR/CredSniper" ]; then
     pip3 install -r requirements.txt
 fi
 
+# Clone and setup cookie-monster
+clone_repo "$GITHUB/KingOfTheNOPs/cookie-monster.git" "$WORKDIR/cookie-monster"
+if [ -d "$WORKDIR/cookie-monster" ]; then
+    cd "$WORKDIR/cookie-monster"
+    pip3 install -r requirements.txt
+fi
+
 echo "Done"
