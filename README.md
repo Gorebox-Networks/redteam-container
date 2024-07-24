@@ -17,7 +17,7 @@ Pull the Docker image from Docker Hub:
 
     docker pull dvd42/redteam-container:latest
     
-## GNS3 Configuration
+### GNS3 Configuration
 
 * Open GNS3 and create a new project.
 * Go to Edit > Preferences > Docker.
@@ -30,20 +30,20 @@ Pull the Docker image from Docker Hub:
 * Click Next and adjust network settings if needed. Default settings should be sufficient for most cases.
 * Click Finish to create the template.
 
-## Adding the Container to Your GNS3 Project
+### Adding the Container to Your GNS3 Project
 
 * Save the file named redteam-container.gns3 in some location accessible from GNS3.
 * Open GNS3.
 * Select File > Open Project.
 * Navigate to the redteam-container.gns3 file you created and open it.
 
-## Usage
+### Usage
 
 * In GNS3, drag the RedTeam Container node from the device panel to the workspace.
 * Right-click the node and select Start to launch the container.
 * Connect to the container using the console option provided by GNS3.
 
-## Legal Disclaimer
+### Legal Disclaimer
 This project is intended for educational purposes only. The tools and techniques provided in this container should only be used in environments where you have explicit permission to perform penetration testing and security assessments. Unauthorized use of these tools is illegal and unethical.
 
 By using this project, you agree to the following terms:
