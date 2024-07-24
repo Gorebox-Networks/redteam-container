@@ -32,38 +32,7 @@ Pull the Docker image from Docker Hub:
 
 ## Adding the Container to Your GNS3 Project
 
-* Save the following JSON configuration into a file named redteam-container.gns3:
-
-    {
-        "version": "2.2.16",
-        "project_id": "redteam-container",
-        "topology": {
-            "nodes": [
-                {
-                    "compute_id": "local",
-                    "console_type": "telnet",
-                    "name": "RedTeam Container",
-                    "node_id": "node1",
-                    "node_type": "docker",
-                    "properties": {
-                        "container_id": "dvd42/redteam-container",
-                        "console_http_port": 80,
-                        "console_https_port": 443,
-                        "console_ssh_port": 22,
-                        "env": [],
-                        "start_command": null
-                    },
-                    "symbol": ":/symbols/docker_guest.svg",
-                    "x": 0,
-                    "y": 0,
-                    "z": 1
-                }
-            ],
-            "links": []
-        }
-    }
-
-
+* Save the file named redteam-container.gns3 in some location accessible from GNS3.
 * Open GNS3.
 * Select File > Open Project.
 * Navigate to the redteam-container.gns3 file you created and open it.
