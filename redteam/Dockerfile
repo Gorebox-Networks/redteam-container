@@ -67,9 +67,3 @@ WORKDIR /root/RedTeamToolkit
 
 # Set start.sh as the entrypoint
 ENTRYPOINT ["/root/start.sh"]
-
-# Optionally, specify CMD if you have additional parameters or commands
-# CMD ["parameter1", "parameter2"]
-
-# Uncomment below if you want supervisord to be the main process instead of start.sh
-# CMD ["/usr/bin/supervisord"]
