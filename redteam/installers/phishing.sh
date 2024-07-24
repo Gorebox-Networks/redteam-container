@@ -1,25 +1,76 @@
 #!/bin/bash
 
+set -e
+
 WORKDIR="/root/RedTeamToolkit/phishing"
 GITHUB="https://github.com"
 
-mkdir $WORKDIR
+# Create working directory if it doesn't exist
+mkdir -p "$WORKDIR"
 
 echo "Installing phishing tools"
 
-apt install golang-go
+# Update and install necessary packages
+apt update && apt install -y golang-go
 
-cd $WORKDIR
-git clone $GITHUB/trustedsec/social-engineer-toolkit.git && cd social-engineer-toolkit && pip3 install -r requirements.txt && cd $WORKDIR
-git clone $GITHUB/L4bF0x/PhishingPretexts.git
-git clone $GITHUB/ryhanson/phishery.git
-git clone $GITHUB/htr-tech/zphisher.git 
-git clone $GITHUB/rsmusllp/king-phisher.git && cd king-phisher/tools && ./install.sh && cd $WORKDIR
-git clone $GITHUB/kgretzky/evilginx2.git && cd evilginx2 && make && make install && cd $WORKDIR
-git clone $GITHUB/initstring/evil-ssdp.git
-#git clone $GITHUB/Raikia/FiercePhish.git
-git clone $GITHUB/gophish/gophish.git && cd gophish && go build && cd $WORKDIR
-git clone $GITHUB/mandiant/ReelPhish.git && cd ReelPhish && pip3 install -r requirements.txt && cd $WORKDIR
-git clone $GITHUB/ustayready/CredSniper.git && cd CredSniper && pip3 install -r requirements.txt
-cd $WORKDIR
+# Function to clone a repository if it doesn't exist
+clone_repo() {
+    local repo_url=$1
+    local target_dir=$2
+    if [ ! -d "$target_dir" ]; then
+        git clone "$repo_url" "$target_dir"
+    else
+        echo "Repository $repo_url already cloned in $target_dir"
+    fi
+}
+
+# Change to working directory
+cd "$WORKDIR"
+
+# Clone and setup repositories
+clone_repo "$GITHUB/trustedsec/social-engineer-toolkit.git" "$WORKDIR/social-engineer-toolkit"
+if [ -d "$WORKDIR/social-engineer-toolkit" ]; then
+    cd "$WORKDIR/social-engineer-toolkit"
+    pip3 install -r requirements.txt
+fi
+
+clone_repo "$GITHUB/L4bF0x/PhishingPretexts.git" "$WORKDIR/PhishingPretexts"
+clone_repo "$GITHUB/ryhanson/phishery.git" "$WORKDIR/phishery"
+clone_repo "$GITHUB/htr-tech/zphisher.git" "$WORKDIR/zphisher"
+
+clone_repo "$GITHUB/rsmusllp/king-phisher.git" "$WORKDIR/king-phisher"
+if [ -d "$WORKDIR/king-phisher" ]; then
+    cd "$WORKDIR/king-phisher/tools"
+    ./install.sh
+fi
+
+clone_repo "$GITHUB/kgretzky/evilginx2.git" "$WORKDIR/evilginx2"
+if [ -d "$WORKDIR/evilginx2" ]; then
+    cd "$WORKDIR/evilginx2"
+    make && make install
+fi
+
+clone_repo "$GITHUB/initstring/evil-ssdp.git" "$WORKDIR/evil-ssdp"
+
+# Uncomment to clone and install FiercePhish
+# clone_repo "$GITHUB/Raikia/FiercePhish.git" "$WORKDIR/FiercePhish"
+
+clone_repo "$GITHUB/gophish/gophish.git" "$WORKDIR/gophish"
+if [ -d "$WORKDIR/gophish" ]; then
+    cd "$WORKDIR/gophish"
+    go build
+fi
+
+clone_repo "$GITHUB/mandiant/ReelPhish.git" "$WORKDIR/ReelPhish"
+if [ -d "$WORKDIR/ReelPhish" ]; then
+    cd "$WORKDIR/ReelPhish"
+    pip3 install -r requirements.txt
+fi
+
+clone_repo "$GITHUB/ustayready/CredSniper.git" "$WORKDIR/CredSniper"
+if [ -d "$WORKDIR/CredSniper" ]; then
+    cd "$WORKDIR/CredSniper"
+    pip3 install -r requirements.txt
+fi
+
 echo "Done"
