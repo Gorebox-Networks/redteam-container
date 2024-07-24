@@ -1,0 +1,28 @@
+{
+    "version": "2.2.16",
+    "project_id": "redteam-container",
+    "topology": {
+        "nodes": [
+            {
+                "compute_id": "local",
+                "console_type": "telnet",
+                "name": "RedTeam Container",
+                "node_id": "node1",
+                "node_type": "docker",
+                "properties": {
+                    "container_id": "dvd42/redteam-container",
+                    "console_http_port": 80,
+                    "console_https_port": 443,
+                    "console_ssh_port": 22,
+                    "env": [],
+                    "start_command": null
+                },
+                "symbol": ":/symbols/docker_guest.svg",
+                "x": 0,
+                "y": 0,
+                "z": 1
+            }
+        ],
+        "links": []
+    }
+}
