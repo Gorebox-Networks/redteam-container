@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 echo "Installing all Red Team tools..."
 
 # Define the list of installer scripts
@@ -23,7 +25,7 @@ installers=(
 for installer in "${installers[@]}"; do
   if [[ -f "$installer" ]]; then
     echo "Running $installer..."
-    ./$installer
+    sudo -E ./$installer
   else
     echo "Error: $installer not found!"
   fi
