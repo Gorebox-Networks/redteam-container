@@ -32,5 +32,5 @@ else
     screen -r "$SESSION_NAME"
 fi
 
- 
-                                                                                      
+# Start supervisord
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
