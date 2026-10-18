@@ -1,13 +1,21 @@
 #!/bin/bash
 
+# Apply credentials BEFORE anything exposes a service.
+# This script is fail-closed: with no SSHPASSWORD it disables password
+# authentication rather than leaving an empty password on a published port.
+/root/set-credentials.sh
+
 # Define a unique session name
 SESSION_NAME="redteam_$(date +%s)"
 
 # ASCII banner
+# NOTE: the backticks in the art below are escaped. Unescaped they are parsed
+# as command substitution, which made this file fail `bash -n` and meant the
+# container entrypoint could not start at all.
 BANNER="
-::::::\       :| ::::::|                  ,::::\           :|       ++                
-::|,::|:~~/ :':|   ::|  :~~/ .::\ :\/|   ::|    ,::\ :::\ :::| .::\ :| :::\ :~~/ :::| 
-::| ::\:::, :::|   ::|  :::, `::| :::|    '::::/`::/ :|:|  :|  `::| :| :|:| :::, :|  
+::::::\       :| ::::::|                  ,::::\           :|       ++
+::|,::|:~~/ :':|   ::|  :~~/ .::\ :\/|   ::|    ,::\ :::\ :::| .::\ :| :::\ :~~/ :::|
+::| ::\:::, :::|   ::|  :::, \`::| :::|    '::::/\`::/ :|:|  :|  \`::| :| :|:| :::, :|
 "
 
 # Clean up dead sessions

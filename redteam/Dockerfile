@@ -30,9 +30,11 @@ RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/inst
     chsh -s $(which zsh)
 
 # Configure VNC
-RUN mkdir -p /root/.vnc
+# The VNC password is set at RUNTIME by /root/set-credentials.sh, never here.
+# Baking it into the image would expose it in image history to anyone who can
+# pull the image or read its metadata.
+RUN mkdir -p /root/.vnc && chmod 700 /root/.vnc
 COPY conf/xstartup /root/.vnc/xstartup
-RUN echo "$SSHPASSWORD" | vncpasswd -f > /root/.vnc/passwd && chmod 600 /root/.vnc/passwd
 
 # RedTeamToolkit 
 RUN mkdir /root/RedTeamToolkit
@@ -43,8 +45,14 @@ RUN chmod +x /root/RedTeamToolkit/*.sh && cd /root/RedTeamToolkit && git clone h
 # Python env
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Setup for ssh (change password ASAP)
-RUN echo "root:$SSHPASSWORD" | chpasswd
+# SSH setup
+# The root password is applied at RUNTIME by /root/set-credentials.sh.
+# It is deliberately NOT an ARG here: undeclared ARGs expand to the empty
+# string, which previously produced `chpasswd` with an empty password and
+# therefore an unauthenticated root shell on a published port.
+# See /root/set-credentials.sh for the fail-closed behaviour.
+COPY installers/set-credentials.sh /root/set-credentials.sh
+RUN chmod 700 /root/set-credentials.sh
 
 # Expose ports for SSH and VNC
 EXPOSE 22 5901

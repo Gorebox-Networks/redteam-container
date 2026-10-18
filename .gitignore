@@ -130,6 +130,21 @@ ENV/
 env.bak/
 venv.bak/
 
+# --- Local secrets: never commit these -------------------------------------
+# NOTE: `env/` above only matches a DIRECTORY named env, which is why the
+# secret file `env` was tracked in the first place. These anchored patterns
+# match the FILES themselves.
+# Root-anchored so nested projects are unaffected.
+/env
+/.env
+/.env.*
+!/.env.example
+/secrets
+/secrets.*
+*.pem
+*.key
+!conf/*.key
+
 # Spyder project settings
 .spyderproject
 .spyproject

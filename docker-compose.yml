@@ -7,12 +7,22 @@ services:
     hostname: redteam
     build:
       context: ./redteam
-      args:
-        SSHPASSWORD: ${SSHPASSWORD}
+      # NO build args.
+      # The root password used to be passed here as SSHPASSWORD and baked into
+      # a Docker build ARG. The ARG was never declared in the Dockerfile, so it
+      # expanded to an empty string and the image ended up with an EMPTY ROOT
+      # PASSWORD on a published port.
+      # The password is now supplied at RUNTIME via the env_file below and
+      # applied by /root/set-credentials.sh, which fails closed.
+      args: {}
     ports:
       - "${RTSSHHOSTPORT}:22"
     restart: unless-stopped
     stdin_open: true  # Mantiene stdin abierto para la interacción
     tty: true         # Asigna una pseudo-TTY
     env_file:
-      - .env
+      - env
+    environment:
+      # Only forwarded to the container's environment, never into an image
+      # layer. Remove this line entirely to run key-only with no password.
+      SSHPASSWORD: "${SSHPASSWORD:-}"
