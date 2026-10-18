@@ -1,10 +1,25 @@
 name: Docker Image CI
 
+# This workflow could never have succeeded. It ran
+#   docker build . --file Dockerfile
+# from the repository ROOT, but the Dockerfile lives at redteam/Dockerfile, so
+# both arguments were wrong: the path did not exist, and even if it had, the
+# build context had to be ./redteam because every COPY in the Dockerfile
+# (conf/.vimrc, installers/start.sh, installers/set-credentials.sh) is relative
+# to redteam/. The repository has zero recorded workflow runs.
+
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
@@ -13,6 +28,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Check out
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      with:
+        persist-credentials: false
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      # Context is ./redteam so the COPY paths resolve. Tag is stable rather
+      # than a timestamp, so the image can be referenced afterwards.
+      run: docker build ./redteam --file ./redteam/Dockerfile --tag redteam:ci
+
+    - name: Verify the credentials gate is present and correct
+      # Guards against the regression this file previously hid: the build-time
+      # password mechanism. If someone reintroduces an empty-password root
+      # login, this fails instead of silently producing an unauthenticated
+      # image.
+      run: |
+        set -euo pipefail
+        dockerfile=./redteam/Dockerfile
+
+        if grep -Eq '^[[:space:]]*ARG[[:space:]]+SSHPASSWORD' "$dockerfile"; then
+          echo "::error::ARG SSHPASSWORD must not be declared; an undeclared ARG expands to empty and yields an empty root password"
+          exit 1
+        fi
+        if grep -Eq '^[[:space:]]*RUN.*\b(chpasswd|vncpasswd)\b' "$dockerfile"; then
+          echo "::error::A password must never be set at build time; credentials are applied at runtime by set-credentials.sh"
+          exit 1
+        fi
+        if ! grep -q 'set-credentials.sh' "$dockerfile"; then
+          echo "::error::The runtime credential gate set-credentials.sh is not wired into the image"
+          exit 1
+        fi
+        echo "credential gate verified"
+
+    - name: Fail-closed contract test
+      # Exercises the real script against stubbed chpasswd/vncpasswd so no real
+      # credential is applied: an unset, empty, whitespace-only or short
+      # password must disable password authentication rather than fall back to
+      # an empty one.
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq openssh-server
+        sudo bash ./redteam/installers/test-set-credentials.sh ./redteam/installers/set-credentials.sh
